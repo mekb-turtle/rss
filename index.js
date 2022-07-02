@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
+const notifier = require("node-notifier");
 const fs = require("fs");
 const path = require("path");
 const listFile = path.join(__dirname, "list.json");
@@ -30,8 +31,11 @@ const finish = () => {
 			e = JSON.stringify(JSON.parse(e));
 			return "\t\t\t" + e;
 		});
-		fs.writeFileSync(listFile, z);
-		process.exit(0);
+		try {
+			fs.writeFileSync(listFile, z);
+		} catch (err) {
+			console.error("failed writing", listFile, err);
+		}
 	}
 }
 for (let i in list) {
@@ -59,6 +63,18 @@ for (let i in list) {
 			if (!newEntries[i]) {
 				if (!listEntries[i].includes(a)) {
 					console.log(a);
+					notifier.notify({
+						title: entries[j].title || entries[j].summary,
+						message: entries[j].content || entries[j].author.name || entries[j].author || "",
+						wait: true
+					}, (err, res, meta) => {
+						if (err) {
+							console.error("error notification", err);
+							return;
+						}
+						if (res)  console.log("res",  res);
+						if (meta) console.log("meta", meta);
+					});
 				}
 			}
 		}
