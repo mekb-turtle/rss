@@ -1,0 +1,11 @@
+{
+  "name": "rss-reader",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "mekb",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "fast-xml-parser": "^4.0.8"
+  }
+}
